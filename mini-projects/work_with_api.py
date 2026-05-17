@@ -14,5 +14,6 @@ for i in range(1):
     price=usdt_rub['close']
     bitcoin_prices.append(price)
     time.sleep(1)
+print(type(bitcoin_prices))
 print(bitcoin_prices)
 
