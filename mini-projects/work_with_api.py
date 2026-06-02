@@ -1,5 +1,6 @@
 import requests
-
+import random
+import string
 URL = "https://api.rapira.net/open/market/rates"
 
 
@@ -14,9 +15,10 @@ def get_pairs_from_rapira(url):
 class UserWallet:
     def __init__(self,wallet_usdt_value):
         self.wallet={'USDT':wallet_usdt_value}
+        self.wallet_address=generate_address()
 
     def show_wallet(self):
-        print('Your wallet:')
+        print(f'Your wallet ({self.wallet_address}) :')
         for coin,value in self.wallet.items():
             print(value,coin)
 
@@ -110,8 +112,34 @@ class TransactionHistory:
         }
         self.transactions.append(transaction)
 
+class User:
+    def __init__(self,first_name,last_name,email,phone_bill,uid,wallet_usdt_value):
+        self.first_name=first_name
+        self.last_name=last_name
+        self.email=email
+        self.phone_bill=phone_bill
+        self.uid=uid
+        self.wallet=UserWallet(wallet_usdt_value)
+        self.transaction_history=TransactionHistory()
+    def show_user_data(self):
+        print(self.first_name)
+        print(self.last_name)
+        print(self.email)
+        print(self.phone_bill)
+        print(self.uid)
+        self.wallet.show_wallet()
 
 
+
+def generate_address():
+    alph=string.ascii_letters+string.digits
+    address='T'+ ''.join(random.choices(alph,k=33))
+    return address
+
+def generate_uid():
+    alph=string.digits
+    uid=''.join(random.choices(alph,k=6))
+    return uid
 
 def show_pairs(pairs):
     active_coins = list(pairs.keys())
@@ -168,18 +196,22 @@ def show_menu():
     print('4 - Sell coin')
     print('5 - Check transactions')
     print('6 - Show cources')
+    print('7 - My account')
     print('0 - Exit')
 
 
 
 
 def main():
-    print('Hello on our CryptoChanger!!!')
     pairs = get_pairs_from_rapira(URL)
+    print('Hello on our CryptoChanger!!!')
+    first_name=input('Add your first_name: ')
+    last_name = input('Add your last_name: ')
+    email = input('Add your email: ')
+    phone_bill = input('Add your phone_bill: ')
+    uid = generate_uid()
     wallet_usdt_value = check_input_wallet_balance('Add your USDT balance: ')
-    wallet = UserWallet(wallet_usdt_value)
-    wallet.show_wallet()
-    transactions=TransactionHistory()
+    user1 = User(first_name, last_name, email, phone_bill, uid,wallet_usdt_value)
 
     while True:
         show_menu()
@@ -188,19 +220,19 @@ def main():
             pairs = get_pairs_from_rapira(URL)
             show_pairs(pairs)
         elif choice==2:
-            wallet.show_wallet()
+            user1.wallet.show_wallet()
         elif choice==3:
             pairs = get_pairs_from_rapira(URL)
             coin_user_want_buy = str_input('Choose coin you want to buy: ',pairs)
-            usdt_value_to_buy=wallet.check_usdt_value_to_buy('Write how much USDT you want to spend to buy this coin: ')
-            wallet.buy_coin( coin_user_want_buy, usdt_value_to_buy, pairs,transactions)
+            usdt_value_to_buy=user1.wallet.check_usdt_value_to_buy('Write how much USDT you want to spend to buy this coin: ')
+            user1.wallet.buy_coin( coin_user_want_buy, usdt_value_to_buy, pairs,user1.transaction_history)
         elif choice==4:
             pairs = get_pairs_from_rapira(URL)
-            coin_user_want_to_sell=wallet.check_coin_in_wallet('Add coin you want to sell',pairs)
-            coin_value_want_to_sell = wallet.check_coin_value_to_sell('Add value of coin you want to sell',coin_user_want_to_sell)
-            wallet.sell_coin(coin_user_want_to_sell,coin_value_want_to_sell,pairs,transactions)
+            coin_user_want_to_sell=user1.wallet.check_coin_in_wallet('Add coin you want to sell',pairs)
+            coin_value_want_to_sell = user1.wallet.check_coin_value_to_sell('Add value of coin you want to sell',coin_user_want_to_sell)
+            user1.wallet.sell_coin(coin_user_want_to_sell,coin_value_want_to_sell,pairs,user1.transaction_history)
         elif choice==5:
-            transactions.show_transactions()
+            user1.transaction_history.show_transactions()
         elif choice==6:
             pairs = get_pairs_from_rapira(URL)
             print('1 - buy')
@@ -212,7 +244,8 @@ def main():
                 show_cources(pairs, 'sell')
             else:
                 print('Unknown command')
-
+        elif choice==7:
+            user1.show_user_data()
         elif choice==0:
             print('See you later')
             break
