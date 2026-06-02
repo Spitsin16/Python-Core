@@ -11,7 +11,7 @@ def get_pairs_from_rapira(url):
         coins[pair['symbol']]={'buy':pair['askPrice'],'sell':pair['bidPrice']}
     return coins
 
-class User_wallet:
+class UserWallet:
     def __init__(self,wallet_usdt_value):
         self.wallet={'USDT':wallet_usdt_value}
 
@@ -26,7 +26,7 @@ class User_wallet:
         coin_value = usdt_value_to_buy / buy_course
         self.wallet['USDT'] = usdt_value - usdt_value_to_buy
         coin_name = coin_user_want_buy.split('/')[0]
-        if coin_name in self.wallet:
+        if coin_name in self.wallet :
             self.wallet[coin_name] = coin_value + self.wallet[coin_name]
         else:
             self.wallet[coin_name] = coin_value
@@ -58,10 +58,9 @@ class User_wallet:
     def check_usdt_value_to_buy(self,message):
         while True:
             usdt_value_to_buy = float_input(message)
-            if usdt_value_to_buy == 0:
+            if usdt_value_to_buy == 0 or usdt_value_to_buy <0:
                 print('Amount must be greater than zero')
             elif usdt_value_to_buy > self.wallet['USDT']:
-
                 print('Not enough money')
             else:
                 return usdt_value_to_buy
@@ -69,7 +68,7 @@ class User_wallet:
     def check_coin_value_to_sell(self,message, coin_user_want_to_sell):
         while True:
             coin_value_want_to_sell = float_input(message)
-            if coin_value_want_to_sell == 0:
+            if coin_value_want_to_sell == 0 or coin_value_want_to_sell<0:
                 print('Amount must be greater than zero')
             elif coin_value_want_to_sell > self.wallet[coin_user_want_to_sell.split('/')[0]]:
                 print('Not enough money')
@@ -87,7 +86,7 @@ class User_wallet:
                 return wallet_usdt_value
 
 
-class Transaction_history:
+class TransactionHistory:
     def __init__(self):
         self.transactions=[]
 
@@ -132,7 +131,7 @@ def float_input(message):
 
 def str_input(message,pairs):
     while True:
-        user_input=input(message)
+        user_input=input(message).upper()
         if  user_input in list(pairs.keys()):
             return str(user_input)
         else:
@@ -178,9 +177,9 @@ def main():
     print('Hello on our CryptoChanger!!!')
     pairs = get_pairs_from_rapira(URL)
     wallet_usdt_value = check_input_wallet_balance('Add your USDT balance: ')
-    wallet = User_wallet(wallet_usdt_value)
+    wallet = UserWallet(wallet_usdt_value)
     wallet.show_wallet()
-    transactions=Transaction_history()
+    transactions=TransactionHistory()
 
     while True:
         show_menu()
