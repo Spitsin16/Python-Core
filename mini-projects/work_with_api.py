@@ -46,8 +46,22 @@ class UserWallet:
         self.wallet['USDT'] += usdt_value
         self.wallet[coin_name] -= coin_value_want_to_sell
         transactions.add_transaction( 'sell', coin_name, coin_amount, usdt_value, course)
-
+        if self.wallet[coin_name]<=0:
+            del self.wallet[coin_name]
         print(f'Congrats you sell {coin_value_want_to_sell} {coin_name} on {usdt_value} USDT')
+
+    def sell_all_value_of_coin(self, coin_user_want_to_sell, pairs, transactions):
+        sell_course = float(pairs[coin_user_want_to_sell]['sell'])
+        coin_name = coin_user_want_to_sell.split('/')[0]
+        usdt_value = self.wallet[coin_name] * sell_course
+        course = sell_course
+        coin_amount = self.wallet[coin_name]
+        self.wallet['USDT'] += usdt_value
+        self.wallet[coin_name] -= self.wallet[coin_name]
+        transactions.add_transaction('sell', coin_name, coin_amount, usdt_value, course)
+        del self.wallet[coin_name]
+        print(f'Congrats you sell {coin_amount} {coin_name} on {usdt_value} USDT')
+
 
     def check_coin_in_wallet(self,message, pairs):
         while True:
@@ -229,8 +243,15 @@ def main():
         elif choice==4:
             pairs = get_pairs_from_rapira(URL)
             coin_user_want_to_sell=user1.wallet.check_coin_in_wallet('Add coin you want to sell',pairs)
-            coin_value_want_to_sell = user1.wallet.check_coin_value_to_sell('Add value of coin you want to sell',coin_user_want_to_sell)
-            user1.wallet.sell_coin(coin_user_want_to_sell,coin_value_want_to_sell,pairs,user1.transaction_history)
+            print('Do you want sell all value of coin?')
+            print('1 - yes')
+            print('2 - no')
+            choice41=int(input())
+            if choice41 == 1:
+                user1.wallet.sell_all_value_of_coin(coin_user_want_to_sell,pairs,user1.transaction_history)
+            elif choice41==2:
+                coin_value_want_to_sell = user1.wallet.check_coin_value_to_sell('Add value of coin you want to sell',coin_user_want_to_sell)
+                user1.wallet.sell_coin(coin_user_want_to_sell,coin_value_want_to_sell,pairs,user1.transaction_history)
         elif choice==5:
             user1.transaction_history.show_transactions()
         elif choice==6:
