@@ -7,4 +7,9 @@ def show_menu():
     print('5 - Check transactions')
     print('6 - Show cources')
     print('7 - My account')
-    print('0 - Exit')
+    print('8 - Log out')
+    print('0 - Disconnect')
+
+def show_menu_1():
+    print('1 - Registraion')
+    print('2 - Log in')

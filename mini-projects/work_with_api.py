@@ -1,16 +1,25 @@
 import requests
 import random
 import string
-URL = "https://api.rapira.net/open/market/rates"
 
+class MarketApi:
+    def __init__(self):
+        self.url= "https://api.rapira.net/open/market/rates"
+        self.pairs={}
+    def get_market_api_pairs_from_rapira(self):
+        message = (requests.get(self.url)).json()
+        data = message['data']
+        for pair in data:
+            self.pairs[pair['symbol']] = {'buy': pair['askPrice'], 'sell': pair['bidPrice']}
+        return self.pairs
 
-def get_pairs_from_rapira(url):
-    message=(requests.get(url)).json()
-    data=message['data']
-    coins={}
-    for pair in data:
-        coins[pair['symbol']]={'buy':pair['askPrice'],'sell':pair['bidPrice']}
-    return coins
+    def show_pairs(self):
+        active_coins = list(self.pairs.keys())
+        print(*active_coins)
+
+    def show_cources(self,operation):
+        for item, value in self.pairs.items():
+            print(item, value[operation])
 
 class UserWallet:
     def __init__(self,wallet_usdt_value):
@@ -155,13 +164,6 @@ def generate_uid():
     uid=''.join(random.choices(alph,k=6))
     return uid
 
-def show_pairs(pairs):
-    active_coins = list(pairs.keys())
-    print(*active_coins)
-
-def show_cources(pairs, operation):
-    for item, value in pairs.items():
-        print(item, value[operation])
 
 def float_input(message):
     while True:
@@ -217,7 +219,7 @@ def show_menu():
 
 
 def main():
-    pairs = get_pairs_from_rapira(URL)
+    market = MarketApi()
     print('Hello on our CryptoChanger!!!')
     first_name=input('Add your first_name: ')
     last_name = input('Add your last_name: ')
@@ -231,17 +233,17 @@ def main():
         show_menu()
         choice=int_input('Choose action:')
         if choice==1:
-            pairs = get_pairs_from_rapira(URL)
-            show_pairs(pairs)
+            pairs = market.get_market_api_pairs_from_rapira()
+            market.show_pairs()
         elif choice==2:
             user1.wallet.show_wallet()
         elif choice==3:
-            pairs = get_pairs_from_rapira(URL)
+            pairs = market.get_market_api_pairs_from_rapira()
             coin_user_want_buy = str_input('Choose coin you want to buy: ',pairs)
             usdt_value_to_buy=user1.wallet.check_usdt_value_to_buy('Write how much USDT you want to spend to buy this coin: ')
             user1.wallet.buy_coin( coin_user_want_buy, usdt_value_to_buy, pairs,user1.transaction_history)
         elif choice==4:
-            pairs = get_pairs_from_rapira(URL)
+            pairs = market.get_market_api_pairs_from_rapira()
             coin_user_want_to_sell=user1.wallet.check_coin_in_wallet('Add coin you want to sell',pairs)
             print('Do you want sell all value of coin?')
             print('1 - yes')
@@ -255,14 +257,14 @@ def main():
         elif choice==5:
             user1.transaction_history.show_transactions()
         elif choice==6:
-            pairs = get_pairs_from_rapira(URL)
+            pairs = market.get_market_api_pairs_from_rapira()
             print('1 - buy')
             print('2 - sell')
             choice_two=int_input('Choose action:')
             if choice_two==1:
-                show_cources(pairs,'buy')
+                market.show_cources('buy')
             elif choice_two==2:
-                show_cources(pairs, 'sell')
+                market.show_cources('sell')
             else:
                 print('Unknown command')
         elif choice==7:
