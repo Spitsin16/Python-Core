@@ -39,6 +39,7 @@ class UserWallet:
             del self.wallet[coin_name]
         print(f'Congrats you sell {coin_value_want_to_sell} {coin_name} on {usdt_value} USDT')
 
+
     def sell_all_value_of_coin(self, coin_user_want_to_sell, pairs, transactions):
         sell_course = float(pairs[coin_user_want_to_sell]['sell'])
         coin_name = coin_user_want_to_sell.split('/')[0]
@@ -78,3 +79,6 @@ class UserWallet:
                 print('Not enough money')
             else:
                 return coin_value_want_to_sell
+
+
+

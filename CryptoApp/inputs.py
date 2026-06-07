@@ -11,6 +11,8 @@ def str_input(message,pairs):
         user_input=input(message).upper()
         if  user_input in list(pairs.keys()):
             return str(user_input)
+        if user_input == 'USDT':
+            return str(user_input)
         else:
             print('Error: enter correct coin')
 

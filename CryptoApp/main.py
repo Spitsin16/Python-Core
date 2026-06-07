@@ -16,10 +16,11 @@ def main():
             choice_1menu = int(input('Choose action:'))
             if choice_1menu == 1:
                 active_user = create_user()
+                print(f'Welcome, {active_user.first_name}, your uid: {active_user.uid}')
                 users.append(active_user)
             elif choice_1menu == 2:
                 if len(users)>0:
-                    active_user = current_user(users)
+                    active_user = login_user(users)
                 elif len(users)==0:
                     print ('There is no registered users')
 
@@ -72,6 +73,9 @@ def main():
                 active_user.show_user_data()
             elif choice == 8:
                 active_user = None
+            elif choice == 9:
+                pairs = market.get_market_api_pairs_from_rapira()
+                transfer(users,pairs,active_user,active_user.transaction_history)
             elif choice == 0:
                 print('See you later')
                 break

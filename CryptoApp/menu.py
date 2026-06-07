@@ -8,6 +8,7 @@ def show_menu():
     print('6 - Show cources')
     print('7 - My account')
     print('8 - Log out')
+    print('9 - Transfer')
     print('0 - Disconnect')
 
 def show_menu_1():
